@@ -1,0 +1,9 @@
+POST https://localhost:5000/lms/api/v1/package/calculate_next_tag
+Content-Type: application/json
+
+{
+  "packageName": "AEPLCore.Cache",
+  "channel": "patch",
+  "server": "nuget",
+  "latestVersion": "6.0.1"
+}
