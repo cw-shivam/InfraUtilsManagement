@@ -1,0 +1,43 @@
+##                       .NET Core Baseline
+## =======================================================================
+[Dd]ebug/
+[Dd]ebugPS/
+[Rr]elease/
+[Xx]64/
+[Xx]86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bbin/
+bin/
+obj/
+/build/
+
+##                 C# / .NET Tooling & Artifacts
+## =======================================================================
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.ide/
+
+##                     IDE Specific (VS Code & VS)
+## =======================================================================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vs/
+
+##                 Local Configuration & App Secrets
+## =======================================================================
+# Block secrets from accidentally getting committed to version control
+appsettings.local.json
+secrets.json
+
+##                      Docker & Buildx Cache
+## =======================================================================
+.dockerignore
+# Keeping the Dockerfile tracked, but ignoring local docker build exports
+*.tar
