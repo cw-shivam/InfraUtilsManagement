@@ -95,11 +95,6 @@ namespace lms.Services
                     ex
                 );
             }
-            catch (PackageVersionsFetchException)
-            {
-                // Re-throw our explicit HTTP status code failure directly without wrapping it again
-                throw;
-            }
             catch (Exception ex)
             {
                 _logger.LogError(

@@ -146,7 +146,7 @@ namespace lms.Utility
                 if (string.IsNullOrEmpty(bumpScope))
                 {
                     throw new InvalidPreReleaseFormatException(
-                        $"Cannot use shorthand '{targetChannel}'. A prefix scope (major-, minor-, patch-) is strictly required when transitioning from a stable version."
+                        $"Cannot use '{targetChannel}' only for latestVersion '{version.Original}'. A prefix scope (major-, minor-, patch-) is strictly required when transitioning from a stable version to preReleaseVersion. You can use (major|minor|patch)-{targetChannel} if the latest version is a stable release , else if the latest version is already on a prerelease channel you can use simple {targetChannel}, it will icrement the build number"
                     );
                 }
 
