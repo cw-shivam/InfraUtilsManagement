@@ -40,7 +40,6 @@ namespace lms.Utility
                     "No available versions provided to calculate the next step."
                 );
             }
-
             string baseVersion = sorted[0];
 
             if (!SemVerHelper.TryParse(baseVersion, out var current) || current is null)
@@ -103,7 +102,6 @@ namespace lms.Utility
             var major = version.Major;
             var minor = version.Minor;
             var patch = version.Patch;
-
             // If bumping a pre-release version to a clean stable version (e.g. 1.2.3-beta.1 -> stable patch)
             // standard semver dictates you consume the current values without incrementing the digits further.
             if (!version.IsStable)

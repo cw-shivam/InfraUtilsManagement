@@ -2,7 +2,7 @@ POST https://localhost:5000/lms/api/v1/package/calculate_next_tag
 Content-Type: application/json
 
 {
-  "packageName": "AEPLCore.Cache",
-  "channel": "alpha",
-  "server": "nuget",
+  "packageName": "@mxc/location",
+  "channel": "patch",
+  "server": "npm",
 }

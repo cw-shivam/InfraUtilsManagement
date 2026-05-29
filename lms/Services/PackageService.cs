@@ -47,9 +47,27 @@ namespace lms.Services
                 );
             }
 
+            if (string.IsNullOrWhiteSpace(packageEntity.environment))
+            {
+                throw new ArgumentException(
+                    "environment not specified",
+                    nameof(packageEntity.packageName)
+                );
+            }
+
             string content;
-            var nugetServer = _configuration.GetValue<string>("nugetServer") ?? "";
-            var npmServer = _configuration.GetValue<string>("npmServer") ?? "";
+            var nugetServer;
+            var npmServer;
+            if (environment == "dev")
+            {
+                nugetServer = _configuration.GetValue<string>("nugetServerDev") ?? "";
+                npmServer = _configuration.GetValue<string>("npmServerDev") ?? "";
+            }
+            else
+            {
+                nugetServer = _configuration.GetValue<string>("nugetServerProd") ?? "";
+                npmServer = _configuration.GetValue<string>("npmServerProd") ?? "";
+            }
 
             var packageUrl = UrlMaker.createPackageVersionsUrl(
                 packageEntity.packageName,
