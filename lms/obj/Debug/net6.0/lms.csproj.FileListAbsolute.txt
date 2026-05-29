@@ -34,3 +34,4 @@ c:\Users\chouhan.shivam\Desktop\shivam\personal\InfraUtilsManagementSystem\lms\o
 c:\Users\chouhan.shivam\Desktop\shivam\personal\InfraUtilsManagementSystem\lms\obj\Debug\net6.0\lms.pdb
 c:\Users\chouhan.shivam\Desktop\shivam\personal\InfraUtilsManagementSystem\lms\obj\Debug\net6.0\lms.genruntimeconfig.cache
 c:\Users\chouhan.shivam\Desktop\shivam\personal\InfraUtilsManagementSystem\lms\obj\Debug\net6.0\ref\lms.dll
+C:\Users\chouhan.shivam\Desktop\shivam\personal\InfraUtilsManagementSystem\lms\obj\Debug\net6.0\lms.sourcelink.json

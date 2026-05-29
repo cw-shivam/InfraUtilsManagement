@@ -25,20 +25,32 @@ namespace lms.Services
         {
             if (packageEntity == null)
             {
-                return "PackageEntity is null";
+                throw new ArgumentNullException(
+                    nameof(packageEntity),
+                    "Package configuration data is missing."
+                );
             }
 
             if (string.IsNullOrWhiteSpace(packageEntity.server))
             {
-                _logger.LogWarning(
-                    "Missing server for package {Package}",
-                    packageEntity.packageName
+                throw new ArgumentException(
+                    $"Registry server framework type (npm/nuget) is required, but was missing for package: '{packageEntity.packageName}'.",
+                    nameof(packageEntity.server)
                 );
-                return "server is required (npm or nuget)";
             }
 
+            if (string.IsNullOrWhiteSpace(packageEntity.packageName))
+            {
+                throw new ArgumentException(
+                    "Package name cannot be empty or null.",
+                    nameof(packageEntity.packageName)
+                );
+            }
+
+            string content;
             var nugetServer = _configuration.GetValue<string>("nugetServer") ?? "";
             var npmServer = _configuration.GetValue<string>("npmServer") ?? "";
+
             var packageUrl = UrlMaker.createPackageVersionsUrl(
                 packageEntity.packageName,
                 packageEntity.server,
@@ -52,25 +64,81 @@ namespace lms.Services
                 packageUrl
             );
 
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync(packageUrl);
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                using var response = await client.GetAsync(packageUrl);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new PackageVersionsFetchException(
+                        packageEntity.packageName,
+                        packageEntity.server,
+                        $"Remote registry server returned an error error ({response.StatusCode}) while looking up package '{packageEntity.packageName}'. Verify the package name exists on your target ecosystem.",
+                        statusCode: response.StatusCode
+                    );
+                }
+
+                content = await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Network connectivity issue while retrieving version data for {Package}",
+                    packageEntity.packageName
+                );
+                throw new PackageVersionsFetchException(
+                    packageEntity.packageName,
+                    packageEntity.server,
+                    $"Unable to establish a connection to the {packageEntity.server} registry server. Please check network connectivity and registry URLs.",
+                    ex
+                );
+            }
+            catch (PackageVersionsFetchException)
+            {
+                // Re-throw our explicit HTTP status code failure directly without wrapping it again
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Unexpected error fetching versions for {Package}",
+                    packageEntity.packageName
+                );
+                throw new PackageVersionsFetchException(
+                    packageEntity.packageName,
+                    packageEntity.server,
+                    $"An unexpected system error occurred while downloading metadata for package '{packageEntity.packageName}'.",
+                    ex
+                );
+            }
+
+            // Parse and safely extract available tags
             var versions = RegistryVersionsParser
                 .ParseVersions(packageEntity.server, content)
-                .ToList();
+                ?.ToList();
 
-            string? reference = string.IsNullOrWhiteSpace(packageEntity.latestVersion)
-                ? null
-                : packageEntity.latestVersion;
+            if (versions == null || !versions.Any())
+            {
+                _logger.LogWarning(
+                    "Registry returned data but no parseable versions were found for {Package}",
+                    packageEntity.packageName
+                );
 
-            var next = VersionBumper.CalculateNextVersion(
-                versions,
-                packageEntity.channel,
-                _logger,
-                reference
-            );
+                // If there are absolutely no versions available on the registry yet,
+                // you might want to throw an exception, or pass an initial baseline version seed like "0.0.0"
+                // depending on your business rules.
+                throw new InvalidOperationException(
+                    $"No valid historical version tags were found in the registry manifest for package '{packageEntity.packageName}'. Cannot calculate step."
+                );
+            }
+
+            // Hand off calculation to your domain rule engine
+            // Any custom exceptions thrown from VersionBumper (e.g., ReverseChannelTransitionException)
+            // will naturally bubble up directly to the client with their clear messages intact.
+            var next = VersionBumper.CalculateNextVersion(versions, packageEntity.channel, _logger);
 
             _logger.LogInformation(
                 "Next version for {Package} ({Channel}): {Next}",

@@ -3,7 +3,6 @@ Content-Type: application/json
 
 {
   "packageName": "AEPLCore.Cache",
-  "channel": "patch",
+  "channel": "alpha",
   "server": "nuget",
-  "latestVersion": "6.0.1"
 }

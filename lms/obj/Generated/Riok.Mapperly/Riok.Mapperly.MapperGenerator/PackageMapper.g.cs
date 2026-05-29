@@ -10,7 +10,6 @@ namespace lms.Mappings
             var target = new global::lms.Entities.PackageEntity();
             target.packageName = packageDto.packageName;
             target.channel = packageDto.channel;
-            target.latestVersion = packageDto.latestVersion;
             target.server = packageDto.server;
             return target;
         }

@@ -61,7 +61,7 @@ namespace lms.Utility
             var result = new List<string>();
             foreach (var prop in versions.EnumerateObject())
             {
-                if (!string.IsNullOrWhiteSpace(prop.Name))
+                if (!string.IsNullOrWhiteSpace(prop.Name)) // prop.Name is the version
                 {
                     result.Add(prop.Name);
                 }
