@@ -58,7 +58,7 @@ namespace lms.Services
             string content;
             var nugetServer;
             var npmServer;
-            if (environment == "dev")
+            if (packageEntity.environment == "dev")
             {
                 nugetServer = _configuration.GetValue<string>("nugetServerDev") ?? "";
                 npmServer = _configuration.GetValue<string>("npmServerDev") ?? "";
