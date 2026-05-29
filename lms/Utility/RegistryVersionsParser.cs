@@ -6,7 +6,6 @@ namespace lms.Utility
     {
         public static IEnumerable<string> ParseVersions(string server, string jsonContent)
         {
-            Console.WriteLine(jsonContent);
             if (string.IsNullOrWhiteSpace(jsonContent))
             {
                 return Array.Empty<string>();

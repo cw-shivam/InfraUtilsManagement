@@ -56,8 +56,8 @@ namespace lms.Services
             }
 
             string content;
-            var nugetServer;
-            var npmServer;
+            var nugetServer = "";
+            var npmServer = "";
             if (packageEntity.environment == "dev")
             {
                 nugetServer = _configuration.GetValue<string>("nugetServerDev") ?? "";
@@ -68,7 +68,10 @@ namespace lms.Services
                 nugetServer = _configuration.GetValue<string>("nugetServerProd") ?? "";
                 npmServer = _configuration.GetValue<string>("npmServerProd") ?? "";
             }
-
+            if (npmServer == "" && nugetServer == "")
+            {
+                throw new Exception("Server url not found");
+            }
             var packageUrl = UrlMaker.createPackageVersionsUrl(
                 packageEntity.packageName,
                 packageEntity.server,
